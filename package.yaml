@@ -1,0 +1,4 @@
+name: selsyn
+description: High-performance IEEE C37.118 Synchrophasor Measurement Unit and Grid Frequency Stability Controller
+environment:
+  sdk: ">=2.0.0"
