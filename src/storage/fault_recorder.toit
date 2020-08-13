@@ -118,7 +118,8 @@ class TransientFaultRecorder:
     data := []
     channel-buffers.do: | buf/WaveformRingBuffer |
       buf.freeze
-      data.add (buf.snapshot total-samples)
+      snap-size := min total-samples buf.count
+      data.add (buf.snapshot snap-size)
 
     latest-snapshot = OscillogramSnapshot
       trigger-reason

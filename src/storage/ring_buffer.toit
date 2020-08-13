@@ -56,14 +56,16 @@ class WaveformRingBuffer:
     return buffer[idx]
 
   /**
-  Extract a continuous sub-array snapshot of the last $window_size samples.
+  Extract a continuous sub-array snapshot of the last $window-size samples.
+  If $window-size exceeds available $count, returns all available samples.
   */
   snapshot window-size/int -> List:
-    if window-size > count:
-      throw "Requested snapshot size $window-size exceeds buffered count $count"
-    out := List window-size 0.0
-    start-offset := count - window-size
-    for i := 0; i < window-size; i++:
+    actual-size := min window-size count
+    if actual-size <= 0:
+      return []
+    out := List actual-size 0.0
+    start-offset := count - actual-size
+    for i := 0; i < actual-size; i++:
       out[i] = get (start-offset + i)
     return out
 
