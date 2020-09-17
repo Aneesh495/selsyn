@@ -7,6 +7,7 @@ receives real-time synchrophasor data frames, validates CRC-CCITT checksums,
 and renders a live ASCII telemetry terminal dashboard.
 """
 
+import math
 import socket
 import struct
 import sys
@@ -32,6 +33,11 @@ class PdcClient:
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.settimeout(2.0)
+
+    def close(self) -> None:
+        """Close client network socket."""
+        if self.sock:
+            self.sock.close()
 
     @staticmethod
     def calculate_crc(data: bytes) -> int:
