@@ -1,11 +1,11 @@
 # Selsyn: IEEE C37.118 Synchrophasor Measurement Unit and Grid Frequency Stability Controller
 # Makefile for building, testing, linting, and benchmarking
 
-.PHONY: all test test-toit test-python lint bench clean check
+.PHONY: all test test-toit test-python test-native lint bench clean check
 
 all: test
 
-test: test-toit test-python
+test: test-toit test-python test-native
 
 test-toit:
 	@echo "==> Running Toit unit and integration test suite..."
@@ -15,11 +15,15 @@ test-python:
 	@echo "==> Running Python HIL and compliance test suite..."
 	@python3 -m unittest discover -s tests -p "test_*.py"
 
+test-native:
+	@echo "==> Building and running native C DSP acceleration test suite..."
+	@$(MAKE) -C native test
+
 lint:
 	@echo "==> Verifying typography invariants (no em dashes or en dashes)..."
 	@python3 tools/lint_no_em_dash.py
-	@echo "==> Checking Toit syntax across core engine..."
-	@toit analyze src/engine.toit
+	@echo "==> Checking Toit syntax across main entrypoint and engine..."
+	@toit analyze src/main.toit src/engine.toit
 
 bench:
 	@echo "==> Running Toit and Python performance benchmark suite..."
@@ -30,4 +34,5 @@ check: lint test
 
 clean:
 	@rm -rf build/ bin/ *.snapshot .packages/ recordings/ output/
+	@$(MAKE) -C native clean
 	@find . -type d -name "__pycache__" -exec rm -rf {} +
